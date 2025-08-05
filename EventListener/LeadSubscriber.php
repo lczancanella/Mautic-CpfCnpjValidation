@@ -2,8 +2,8 @@
 
 namespace MauticPlugin\CpfCnpjValidationBundle\EventListener;
 
-use Mautic\FormBundle\Event\FormEvents;
-use Mautic\FormBundle\Event\ValidationEvent;
+use Mautic\LeadBundle\Event\LeadEvent;
+use Mautic\LeadBundle\LeadEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class LeadSubscriber implements EventSubscriberInterface
@@ -11,17 +11,19 @@ class LeadSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            FormEvents::VALIDATE_FORM => ['onValidate', 0],
+            LeadEvents::LEAD_PRE_SAVE => ['onLeadPreSave', 0],
         ];
     }
 
-    public function onValidate(ValidationEvent $event): void
+    public function onLeadPreSave(LeadEvent $event): void
     {
-        $data = $event->getData();
+        $lead = $event->getLead();
 
-        // Verifica se existe o campo personalizado "cpf"
-        if (isset($data['cpf']) && !$this->isValidCpf($data['cpf'])) {
-            $event->addError('cpf', 'O CPF informado é inválido.');
+        if ($lead->hasField('cpf')) {
+            $cpf = $lead->getFieldValue('cpf');
+            if (!empty($cpf) && !$this->isValidCpf($cpf)) {
+                throw new \InvalidArgumentException('O CPF informado é inválido.');
+            }
         }
     }
 
