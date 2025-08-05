@@ -2,48 +2,48 @@
 
 namespace MauticPlugin\CpfCnpjValidationBundle\EventListener;
 
-use Mautic\LeadBundle\Event\LeadEvent;
+use Mautic\LeadBundle\Event\CompanyEvent;
 use Mautic\LeadBundle\LeadEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class LeadSubscriber implements EventSubscriberInterface
+class CompanySubscriber implements EventSubscriberInterface
 {
     public static function getSubscribedEvents(): array
     {
         return [
-            LeadEvents::LEAD_PRE_SAVE => ['onLeadPreSave', 0],
+            LeadEvents::COMPANY_PRE_SAVE => ['onCompanyPreSave', 0],
         ];
     }
 
-    public function onLeadPreSave(LeadEvent $event): void
+    public function onCompanyPreSave(CompanyEvent $event): void
     {
-        $lead = $event->getLead();
+        $company = $event->getCompany();
 
-        if ($lead->hasField('cpf')) {
-            $cpf = $lead->getFieldValue('cpf');
-            if (!empty($cpf) && !$this->isValidCpf($cpf)) {
-                throw new \InvalidArgumentException('O CPF informado é inválido.');
+        if ($company->hasField('cnpj')) {
+            $cnpj = $company->getFieldValue('cnpj');
+            if (!empty($cnpj) && !$this->isValidCnpj($cnpj)) {
+                throw new \InvalidArgumentException('O CNPJ informado é inválido.');
             }
         }
     }
 
-    private function isValidCpf(string $cpf): bool
+    private function isValidCnpj(string $cnpj): bool
     {
-        $cpf = preg_replace('/[^0-9]/', '', $cpf);
+        $cnpj = preg_replace('/[^0-9]/', '', $cnpj);
 
-        if (strlen($cpf) !== 11 || preg_match('/(\d)\1{10}/', $cpf)) {
+        if (strlen($cnpj) != 14 || preg_match('/(\d)\1{13}/', $cnpj)) {
             return false;
         }
 
-        for ($t = 9; $t < 11; $t++) {
+        for ($t = 12; $t < 14; $t++) {
             $d = 0;
-            for ($c = 0; $c < $t; $c++) {
-                $d += $cpf[$c] * (($t + 1) - $c);
+            $c = 0;
+            for ($m = $t - 7, $i = 0; $i < $t; $i++) {
+                $d += $cnpj[$i] * $m--;
+                if ($m < 2) $m = 9;
             }
             $d = ((10 * $d) % 11) % 10;
-            if ($cpf[$c] != $d) {
-                return false;
-            }
+            if ($cnpj[$t] != $d) return false;
         }
 
         return true;
