@@ -1,0 +1,11 @@
+{
+  "name": "lczancanella/cpfcnpjvalidator",
+  "description": "Validador de CPF e CNPJ para Mautic",
+  "type": "mautic-plugin",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "MauticPlugin\\CpfCnpjValidationBundle\\": ""
+    }
+  }
+}
