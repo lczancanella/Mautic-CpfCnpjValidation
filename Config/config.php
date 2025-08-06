@@ -2,8 +2,8 @@
 
 return [
     'name'        => 'CpfCnpjValidation',
-    'description' => 'Valida campos de CPF (contatos) e CNPJ (empresas). v1.1',
-    'version'     => '1.1',
+    'description' => 'Valida campos de CPF (contatos) e CNPJ (empresas).',
+    'version'     => '1.0',
     'author'      => 'Luiz Carlos Zancanella Junior',
     'services'    => [
         'events' => [
