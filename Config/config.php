@@ -9,11 +9,11 @@ return [
         'events' => [
             'cpfcnpjvalidation.lead.subscriber' => [
                 'class' => \MauticPlugin\CpfCnpjValidationBundle\EventListener\LeadSubscriber::class,
-                'tags'  => ['kernel.event_subscriber'],
+                'tags'  => 'kernel.event_subscriber',
             ],
             'cpfcnpjvalidation.company.subscriber' => [
                 'class' => \MauticPlugin\CpfCnpjValidationBundle\EventListener\CompanySubscriber::class,
-                'tags'  => ['kernel.event_subscriber'],
+                'tags'  => 'kernel.event_subscriber',
             ],
         ],
     ],
